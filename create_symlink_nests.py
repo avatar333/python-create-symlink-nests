@@ -67,7 +67,7 @@ def scrape_mount_points(subdir_type):
 
 def main(category):
     kp_u.print_args()
-    is_symlink(category)
+
     scrape_mount_points(category)
 
 
