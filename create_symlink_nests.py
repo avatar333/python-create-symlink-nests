@@ -10,6 +10,7 @@ init()
 
 base_mnt_path = '/tmp/mnt/'
 base_plex_path = '/tmp/plex/'
+category_list = ['movies', 'tvseries', 'anime_movies', 'anime_series', 'doccies']
 
 
 def is_symlink(dest_path):
@@ -51,7 +52,8 @@ def scrape_mount_points(subdir_type):
         Exception: ?????
     """
     p = Path(base_mnt_path)
-    lst = p.glob('src_*/'+subdir_type+'/*')
+    lst = p.glob('src_*/'+subdir_type+'/*')  # Need to glob the the source path, to get a list of source dirs
+
     print(f'{Style.BRIGHT}TARGET DIRECTORY: ', base_plex_path+subdir_type, f'{Style.RESET_ALL}')
 
     for src_path_dir in list(lst):
@@ -60,19 +62,40 @@ def scrape_mount_points(subdir_type):
         str_dest_path_dir = base_plex_path+subdir_type+'/'+src_dirname
 
         if not is_symlink(str_dest_path_dir):
-            print(f'Does not exist, creating symlink: {Fore.GREEN}', str_dest_path_dir, f'{Style.RESET_ALL}')
+            print(f'Does not exist, creating symlink: {Style.BRIGHT}{Fore.GREEN}', str_dest_path_dir,
+                  f'{Style.RESET_ALL}')
+            symlink_target = Path(str_dest_path_dir)
+            symlink_target.symlink_to(str_src_path_dir)
         else:
-            print('Does exist as a symlink, skipping')
+            print(f'Does exist as a symlink, skipping: {Fore.YELLOW}', str_src_path_dir, f'{Style.RESET_ALL}')
 
 
 def main(category):
-    kp_u.print_args()
+    """
+    Supply the given category string to the scrap_mount_points function
 
-    scrape_mount_points(category)
+    Args:
+        A single category to be scraped, or 'all' for all valid categories
+
+    Returns:
+        None, but exit(1) if an invalid category is supplied
+
+    Raises:
+        Exception: ?????
+    """
+    if category in category_list and category != 'all':
+        scrape_mount_points(category)
+    elif category == 'all':
+        for my_category in category_list:
+            scrape_mount_points(my_category)
+            print('')
+    else:
+        print(f'Please supply a valid parameter:\n',
+              f'Valid options: movies|tvseries|anime_series|doccies|anime_movies|all)')
+        exit(1)
 
 
 if __name__ == '__main__':
     if kp_u.check_args(1):
         main(sys.argv[1])
 
-# TEST
