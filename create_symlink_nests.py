@@ -26,6 +26,7 @@ def is_symlink(dest_path):
     Raises:
         Exception: ?????
     """
+
     p = Path(dest_path)
 
     if p.exists():
@@ -51,6 +52,7 @@ def scrape_mount_points(subdir_type):
     Raises:
         Exception: ?????
     """
+
     p = Path(base_mnt_path)
     lst = p.glob('src_*/'+subdir_type+'/*')  # Need to glob the the source path, to get a list of source dirs
 
@@ -83,6 +85,7 @@ def main(category):
     Raises:
         Exception: ?????
     """
+
     if category in category_list and category != 'all':
         scrape_mount_points(category)
     elif category == 'all':
